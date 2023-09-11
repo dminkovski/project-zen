@@ -9,8 +9,8 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -o /inbox-zen
+RUN go build -o /project-zen
 
 EXPOSE 8080
 
-CMD [ "/inbox-zen" ]
+CMD [ "/project-zen" ]

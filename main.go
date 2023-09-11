@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
-	"inbox-zen/pkg/controller"
-	"inbox-zen/pkg/jobs"
 	"os"
+	"project-zen/pkg/controller"
+	"project-zen/pkg/jobs"
 
 	"github.com/gin-gonic/gin"
 )
@@ -22,7 +22,7 @@ func main() {
 	}
 
 	// setting up the server
-	httpPathPrefix := "/inbox-zen"
+	httpPathPrefix := "/project-zen"
 	port := ":8080"
 	router := gin.Default()
 	inboxZenRouter := router.Group(httpPathPrefix)

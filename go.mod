@@ -1,4 +1,4 @@
-module inbox-zen
+module project-zen
 
 go 1.19
 
