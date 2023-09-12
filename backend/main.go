@@ -13,6 +13,13 @@ import (
 )
 
 func main() {
+	connectionString, exists := os.LookupEnv("storageaccountkey")
+	if !exists {
+		fmt.Println("failed to get connectionString")
+		os.Exit(1)
+	}
+	blobClient := auth.NewStorageClient(connectionString)
+
 	clientId, exists := os.LookupEnv("clientId")
 	if !exists {
 		fmt.Println("failed to get clientId")
@@ -53,7 +60,7 @@ func main() {
 	// Creating the summaryController for the APIs consumed by the frontend
 	summaryController := controller.NewSummaryController()
 	discountsController := controller.NewDiscountsController()
-	emailController := controller.NewEmailController(oauth)
+	emailController := controller.NewEmailController(oauth, blobClient)
 
 	// Setting the routes for the APIs consumed by the frontend
 	inboxZenRouter.GET(summaryController.GetSummaryRoute, summaryController.GetSummary)

@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"project-zen/pkg/auth"
@@ -15,12 +16,14 @@ The EmailController provides the APIs for the frontend to get the summary of all
 type EmailController struct {
 	GetEmailsRoute string
 	Authenticator  *auth.OAuth
+	BlobClient     *auth.StorageClient
 }
 
-func NewEmailController(auth *auth.OAuth) *EmailController {
+func NewEmailController(auth *auth.OAuth, blobClient *auth.StorageClient) *EmailController {
 	return &EmailController{
 		GetEmailsRoute: "/emails",
 		Authenticator:  auth,
+		BlobClient:     blobClient,
 	}
 }
 
@@ -34,6 +37,15 @@ func (controller *EmailController) GetEmails(c *gin.Context) {
 	mails, err := mail.ReadGmailEmails(client)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err)
+		return
 	}
+
+	jsonData, err := json.Marshal(mails)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
+		return
+	}
+	controller.BlobClient.UploadTextToBlob(jsonData)
+
 	c.JSON(http.StatusOK, mails)
 }
