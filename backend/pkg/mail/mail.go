@@ -1,6 +1,8 @@
 package mail
 
-import "google.golang.org/api/gmail/v1"
+import (
+	"google.golang.org/api/gmail/v1"
+)
 
 type Mail struct {
 	From    string

@@ -64,6 +64,20 @@ func ReadGmailEmails(client *http.Client) ([]Mail, error) {
 			Body:    msg.Snippet,
 		}
 		mails = append(mails, mail)
+		err = markMessageAsRead(srv, "me", message.Id)
+		if err != nil {
+			fmt.Printf("Unable to mark message as read: %v\n", err)
+		} else {
+			fmt.Printf("Marked message as read: %s\n", message.Id)
+		}
 	}
 	return mails, nil
+}
+
+func markMessageAsRead(srv *gmail.Service, userId, messageId string) error {
+	modifyRequest := &gmail.ModifyMessageRequest{
+		RemoveLabelIds: []string{"UNREAD"},
+	}
+	_, err := srv.Users.Messages.Modify(userId, messageId, modifyRequest).Do()
+	return err
 }
