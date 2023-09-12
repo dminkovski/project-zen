@@ -7,7 +7,7 @@ import (
 	"google.golang.org/api/gmail/v1"
 )
 
-func ReadGmailEmails(client *http.Client) {
+func ReadGmailEmails(client *http.Client) string {
 	// Create a Gmail API service instance.
 	srv, err := gmail.New(client)
 	if err != nil {
@@ -24,6 +24,8 @@ func ReadGmailEmails(client *http.Client) {
 	if err != nil {
 		fmt.Printf("Unable to retrieve Gmail messages: %v\n", err)
 	}
+
+	body := ""
 
 	fmt.Println("Unread Messages:")
 	for _, message := range messages.Messages {
@@ -45,5 +47,7 @@ func ReadGmailEmails(client *http.Client) {
 		fmt.Printf("  From: %s\n", msg.Payload.Headers[0].Value) // Assuming the first header is "From"
 		fmt.Printf("  Date: %s\n", msg.Payload.Headers[1].Value) // Assuming the second header is "Date"
 		fmt.Printf("  Body: %s\n", msg.Snippet)
+		body = msg.Snippet
 	}
+	return body
 }

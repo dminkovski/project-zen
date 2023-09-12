@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"project-zen/pkg/auth"
 	"project-zen/pkg/controller"
 	"project-zen/pkg/jobs"
 
@@ -14,9 +15,18 @@ import (
 func main() {
 	clientId, exists := os.LookupEnv("clientId")
 	if !exists {
-		clientId = "default_clientId"
+		fmt.Println("failed to get clientId")
+		os.Exit(1)
 	}
 	fmt.Printf("Client Id: %v\n", clientId)
+
+	clientSecret, exists := os.LookupEnv("clientSecret")
+	if !exists {
+		fmt.Println("failed to get clientSecret")
+		os.Exit(1)
+	}
+
+	oauth := auth.NewOAuth(clientId, clientSecret)
 
 	backgroundContext := context.Background()
 
@@ -34,7 +44,7 @@ func main() {
 	router := gin.Default()
 
 	// Creating the auth controller
-	authController := controller.NewAuthController()
+	authController := controller.NewAuthController(oauth)
 	router.GET(authController.AuthCallbackRoute, authController.AuthCallback)
 	router.GET(authController.StartOAuthFlowRoute, authController.StartOAuthFlow)
 
@@ -43,10 +53,12 @@ func main() {
 	// Creating the summaryController for the APIs consumed by the frontend
 	summaryController := controller.NewSummaryController()
 	discountsController := controller.NewDiscountsController()
+	emailController := controller.NewEmailController(oauth)
 
 	// Setting the routes for the APIs consumed by the frontend
 	inboxZenRouter.GET(summaryController.GetSummaryRoute, summaryController.GetSummary)
 	inboxZenRouter.GET(discountsController.GetDiscountsRoute, discountsController.GetDiscounts)
+	inboxZenRouter.GET(emailController.GetEmailsRoute, emailController.GetEmails)
 
 	router.Run(port)
 }

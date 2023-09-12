@@ -1,15 +1,9 @@
 package controller
 
 import (
-	"fmt"
-	"net/http"
-	"os"
 	"project-zen/pkg/auth"
-	"project-zen/pkg/mail"
 
 	"github.com/gin-gonic/gin"
-	"golang.org/x/oauth2/google"
-	"google.golang.org/api/gmail/v1"
 )
 
 /*
@@ -18,28 +12,25 @@ The AuthController provides the APIs for the frontend to get the discounts of al
 type AuthController struct {
 	AuthCallbackRoute   string
 	StartOAuthFlowRoute string
+	Authenticator       *auth.OAuth
 }
 
-func NewAuthController() *AuthController {
+func NewAuthController(authenticator *auth.OAuth) *AuthController {
 	return &AuthController{
 		AuthCallbackRoute:   "/auth/callback",
 		StartOAuthFlowRoute: "/auth/start-outh-flow",
+		Authenticator:       authenticator,
 	}
 }
 
 func (controller *AuthController) AuthCallback(c *gin.Context) {
-	code := c.DefaultQuery("code", "")
-	if code == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Missing authorization code"})
-		return
-	}
-	c.JSON(http.StatusOK, code)
+	auth.AuthCallback(c, controller.Authenticator)
 }
 
 func (controller *AuthController) StartOAuthFlow(c *gin.Context) {
-	//auth.StartOAuthFlow(c)
+	auth.StartOAuthFlow(c, controller.Authenticator)
 	//ctx := context.Background()
-	b, err := os.ReadFile("credentials.json")
+	/*b, err := os.ReadFile("credentials.json")
 	if err != nil {
 		fmt.Printf("Unable to read client secret file: %v\n", err)
 	}
@@ -52,5 +43,5 @@ func (controller *AuthController) StartOAuthFlow(c *gin.Context) {
 	client := auth.GetClient(config)
 	mail.ReadGmailEmails(client)
 
-	c.JSON(http.StatusOK, "")
+	c.JSON(http.StatusOK, "")*/
 }
