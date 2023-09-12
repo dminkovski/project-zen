@@ -20,7 +20,7 @@ func NewDiscountsController() *DiscountsController {
 	}
 }
 
-func (controller *SummaryController) GetDiscounts(c *gin.Context) {
+func (controller *DiscountsController) GetDiscounts(c *gin.Context) {
 	fmt.Println("Hello from \"Get Discounts\"")
 	discounts := "These are your awesome discounts"
 	c.JSON(http.StatusOK, discounts)

@@ -25,7 +25,7 @@ func NewSummarizeNewlettersJob() *SummarizeNewslettersJob {
 func (job *SummarizeNewslettersJob) StartScheduler(ctx context.Context) error {
 	sched := quartz.NewStdScheduler()
 	sched.Start(ctx)
-	updateIntervalExpression := "0 " + fmt.Sprint(0) + "/" + fmt.Sprint(2) + " * * * *"
+	updateIntervalExpression := "0 6 * * *"
 	cronTrigger, _ := quartz.NewCronTrigger(updateIntervalExpression)
 	err := sched.ScheduleJob(ctx, job, cronTrigger)
 	return err
