@@ -47,8 +47,15 @@ var (
 // Retrieve a token, saves the token, then returns the generated client.
 func (auth *OAuth) GetClient() *http.Client {
 	tokFile := "token.json"
+	tokExp := false
 	tok, err := tokenFromFile(tokFile)
-	if err != nil {
+	if err == nil {
+		if tok.Expiry.Before(time.Now()) {
+			fmt.Printf("Token expired at: %v\n", tok.Expiry)
+			tokExp = true
+		}
+	}
+	if err != nil || tokExp {
 		fmt.Printf("No token, please start the oauth flow first.\n")
 		return nil
 	}
