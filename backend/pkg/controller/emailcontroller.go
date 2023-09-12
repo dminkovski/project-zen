@@ -31,6 +31,9 @@ func (controller *EmailController) GetEmails(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, "No token.")
 		return
 	}
-	mails := mail.ReadGmailEmails(client)
+	mails, err := mail.ReadGmailEmails(client)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
+	}
 	c.JSON(http.StatusOK, mails)
 }

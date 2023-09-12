@@ -7,11 +7,13 @@ import (
 	"google.golang.org/api/gmail/v1"
 )
 
-func ReadGmailEmails(client *http.Client) string {
+func ReadGmailEmails(client *http.Client) ([]Mail, error) {
+	mails := make([]Mail, 0)
 	// Create a Gmail API service instance.
 	srv, err := gmail.New(client)
 	if err != nil {
 		fmt.Printf("Unable to retrieve Gmail messages: %v\n", err)
+		return mails, err
 	}
 
 	/*srv, err := gmail.NewService(ctx, option.WithHTTPClient(client))
@@ -23,9 +25,8 @@ func ReadGmailEmails(client *http.Client) string {
 	messages, err := srv.Users.Messages.List("me").Q("is:unread").Do()
 	if err != nil {
 		fmt.Printf("Unable to retrieve Gmail messages: %v\n", err)
+		return mails, err
 	}
-
-	body := ""
 
 	fmt.Println("Unread Messages:")
 	for _, message := range messages.Messages {
@@ -36,18 +37,33 @@ func ReadGmailEmails(client *http.Client) string {
 
 		// Extract the subject from the message headers.
 		subject := ""
+		from := ""
+		date := ""
 		for _, header := range msg.Payload.Headers {
 			if header.Name == "Subject" {
 				subject = header.Value
-				break
+			}
+
+			if header.Name == "From" {
+				from = header.Value
+			}
+
+			if header.Name == "Date" {
+				date = header.Value
+			}
+
+			if header.Name == "Subject" {
+				subject = header.Value
 			}
 		}
 
-		fmt.Printf("- Subject: %s\n", subject)
-		fmt.Printf("  From: %s\n", msg.Payload.Headers[0].Value) // Assuming the first header is "From"
-		fmt.Printf("  Date: %s\n", msg.Payload.Headers[1].Value) // Assuming the second header is "Date"
-		fmt.Printf("  Body: %s\n", msg.Snippet)
-		body = msg.Snippet
+		mail := Mail{
+			Subject: subject,
+			Date:    date,
+			From:    from,
+			Body:    msg.Snippet,
+		}
+		mails = append(mails, mail)
 	}
-	return body
+	return mails, nil
 }
