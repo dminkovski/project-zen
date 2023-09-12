@@ -104,7 +104,7 @@ func StartOAuthFlow(c *gin.Context, auth *OAuth) {
 		c.Redirect(http.StatusFound, url)
 	}
 	fmt.Printf("Token already saved: %v\n", tok)
-	c.JSON(http.StatusOK, "tok")
+	c.JSON(http.StatusOK, tok)
 }
 
 func AuthCallback(c *gin.Context, auth *OAuth) {

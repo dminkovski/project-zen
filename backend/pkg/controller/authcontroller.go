@@ -18,7 +18,7 @@ type AuthController struct {
 func NewAuthController(authenticator *auth.OAuth) *AuthController {
 	return &AuthController{
 		AuthCallbackRoute:   "/auth/callback",
-		StartOAuthFlowRoute: "/auth/start-outh-flow",
+		StartOAuthFlowRoute: "/auth/start-oauth-flow",
 		Authenticator:       authenticator,
 	}
 }
