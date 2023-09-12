@@ -12,7 +12,10 @@ import (
 )
 
 func main() {
-	clientId := os.Getenv("clientId")
+	clientId, exists := os.LookupEnv("clientId")
+	if !exists {
+		clientId = "default_clientId"
+	}
 	fmt.Printf("Client Id: %v\n", clientId)
 
 	backgroundContext := context.Background()
