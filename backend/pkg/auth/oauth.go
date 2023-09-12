@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/oauth2"
@@ -96,7 +97,14 @@ func saveToken(path string, token *oauth2.Token) {
 func StartOAuthFlow(c *gin.Context, auth *OAuth) {
 	tokFile := "token.json"
 	tok, err := tokenFromFile(tokFile)
-	if err != nil {
+	tokExp := false
+	if err == nil {
+		if tok.Expiry.Before(time.Now()) {
+			fmt.Printf("Token expired at: %v\n", tok.Expiry)
+			tokExp = true
+		}
+	}
+	if err != nil || tokExp {
 		// Create the URL to initiate the OAuth 2.0 flow
 		url := auth.config.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
 
