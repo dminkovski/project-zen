@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import Home from "./modules/home/home.tsx";
 import About from "./modules/about/about.tsx";
+import Dashboard from "./modules/dashboard/dashboard.tsx";
 import Legal from "./modules/legal/legal.tsx";
 import "./App.css";
 
@@ -20,6 +21,10 @@ const router = createBrowserRouter([
   {
     path: "/legal",
     element: <Legal />,
+  },
+  {
+    path: "/dashboard",
+    element: <Dashboard />,
   },
 ]);
 

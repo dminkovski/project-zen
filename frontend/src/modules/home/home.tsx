@@ -3,16 +3,22 @@ import { useNavigate, Link } from "react-router-dom";
 const Home = () => {
   const navigate = useNavigate();
   const start = async () => {
-    const response = await fetch(
+    // window.location.href ="https://project-zen.azurewebsites.net/auth/start-oauth-flow";
+    navigate("/dashboard");
+    /*const response = await fetch(
       "https://project-zen.azurewebsites.net/auth/start-oauth-flow"
     );
-    if ((response as any).access_token) {
+    if (
+      (response as any).access_token ||
+      (response as any).message == "Authorization successful"
+    ) {
       navigate("/dashboard");
     } else {
       window.location.href =
         "https://project-zen.azurewebsites.net/auth/start-oauth-flow";
-    }
+    }*/
   };
+
   return (
     <div>
       <div>
@@ -104,6 +110,14 @@ const Home = () => {
           }}
         >
           Get Started
+        </Button>
+        <br />
+        <Button
+          style={{ marginBottom: 20 }}
+          target="_blank"
+          href="https://project-zen.azurewebsites.net/auth/start-oauth-flow"
+        >
+          Authorize
         </Button>
         <br />
         <div className="ui container">

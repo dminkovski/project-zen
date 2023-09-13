@@ -3,4 +3,5 @@ export interface IEmail {
   Date: string;
   Subject: string;
   Body: string;
+  Summary?: string;
 }
