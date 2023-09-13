@@ -27,23 +27,33 @@ const Dashboard = () => {
               body: JSON.stringify({
                 message: (item as IEmail).Body,
               }),
+              headers: { "Content-Type": "text/html; charset=utf-8" },
             });
             promises.push(promis);
           }
           const results = await Promise.all(promises);
+          console.log(results);
           for (let j = 0; j < results.length; j++) {
-            data[j].Summary = results[j];
+            data[j].Summary = await results[j].text();
           }
+
+          console.log(data);
 
           setEmails(data as unknown as Array<IEmail>);
         }
-        setLoading(false);
       } catch (error) {
         console.error(JSON.stringify(error));
+      } finally {
         setLoading(false);
       }
     }
   };
+
+  useEffect(() => {
+    if (emails && Array.isArray(emails)) {
+      setLoading(false);
+    }
+  }, [emails]);
 
   useEffect(() => {
     getEmails();
@@ -70,13 +80,14 @@ const Dashboard = () => {
       )}
       {!loading && emails?.length <= 0 && (
         <div>
-          <p>No emails</p>
+          <p>No unread emails</p>
         </div>
       )}
       {emails &&
         Array.isArray(emails) &&
-        emails?.map((mail: IEmail) => (
+        emails?.map((mail: IEmail, index: number) => (
           <div
+            key={index}
             style={{
               marginBottom: 25,
               background: "#fff",
