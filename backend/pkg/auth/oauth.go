@@ -137,5 +137,6 @@ func AuthCallback(c *gin.Context, auth *OAuth) {
 
 	saveToken("token.json", token)
 
-	c.JSON(http.StatusOK, gin.H{"message": "Authorization successful"})
+	c.Redirect(http.StatusFound, "https://project-zen.com/dashboard")
+	//c.JSON(http.StatusOK, gin.H{"message": "Authorization successful"})
 }
