@@ -1,6 +1,18 @@
-import { AutoScroll, Button, Image, Text } from "@fluentui/react";
-
+import { Button, Image, Text } from "@fluentui/react";
+import { useNavigate, Link } from "react-router-dom";
 const Home = () => {
+  const navigate = useNavigate();
+  const start = async () => {
+    const response = await fetch(
+      "https://project-zen.azurewebsites.net/auth/start-oauth-flow"
+    );
+    if ((response as any).access_token) {
+      navigate("/dashboard");
+    } else {
+      window.location.href =
+        "https://project-zen.azurewebsites.net/auth/start-oauth-flow";
+    }
+  };
   return (
     <div>
       <div>
@@ -84,18 +96,24 @@ const Home = () => {
             </p>
           </div>
         </div>
-        <Button style={{ marginTop: 30, marginBottom: 30 }} primary>
+        <Button
+          style={{ marginTop: 30, marginBottom: 30 }}
+          primary
+          onClick={() => {
+            start();
+          }}
+        >
           Get Started
         </Button>
         <br />
         <div className="ui container">
           <p>
-            <a href="/about" style={{ color: "#666", marginRight: 5 }}>
+            <Link to="/about" style={{ color: "#666", marginRight: 5 }}>
               | About Us |
-            </a>
-            <a href="/legal" style={{ marginLeft: 5, color: "#666" }}>
+            </Link>
+            <Link to="/legal" style={{ marginLeft: 5, color: "#666" }}>
               Legal |
-            </a>
+            </Link>
           </p>
           <p> &copy; 2023 Project-Zen. All rights reserved.</p>
         </div>
