@@ -9,6 +9,7 @@ import (
 	"project-zen/pkg/controller"
 	"project-zen/pkg/jobs"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -49,6 +50,7 @@ func main() {
 	httpPathPrefix := "/project-zen"
 	port := ":8080"
 	router := gin.Default()
+	router.Use(cors.Default())
 
 	// Creating the auth controller
 	authController := controller.NewAuthController(oauth)
