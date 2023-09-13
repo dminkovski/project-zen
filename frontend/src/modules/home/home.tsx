@@ -87,16 +87,13 @@ const Home = () => {
         <Button style={{ marginTop: 30, marginBottom: 30 }} primary>
           Get Started
         </Button>
-        <p style={{ marginTop: "20px", color: "#666", fontSize: "14px" }}>
-          Already using Project-Zen? <a href="/">Leave feedback</a>
-        </p>
         <br />
         <div className="ui container">
           <p>
             <a href="/about" style={{ color: "#666", marginRight: 5 }}>
               | About Us |
             </a>
-            <a href="/about" style={{ marginLeft: 5, color: "#666" }}>
+            <a href="/legal" style={{ marginLeft: 5, color: "#666" }}>
               Legal |
             </a>
           </p>
