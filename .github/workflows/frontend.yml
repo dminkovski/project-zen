@@ -19,9 +19,8 @@ jobs:
       - name: Set up Azure CLI
         uses: azure/login@v1
         with:
-          client-id: ${{ secrets.AZURE_FRONTEND_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_FRONTEND_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_FRONTEND_SUBSCRIPTION_ID }}
+          creds: ${{ secrets.AZURE_FRONTEND_CREDENTIALS }}
+          enable-AzPSSession: true
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
         with:
@@ -42,8 +41,7 @@ jobs:
       - name: Login to Azure CLI
         uses: azure/login@v1
         with:
-          client-id: ${{ secrets.AZURE_FRONTEND_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_FRONTEND_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_FRONTEND_SUBSCRIPTION_ID }}
+          creds: ${{ secrets.AZURE_FRONTEND_CREDENTIALS }}
+          enable-AzPSSession: true
       - name: Restart Azure App Service
         run: az webapp restart --name ${{ secrets.AZURE_FRONTEND_SERVICE_NAME }} --resource-group  ${{ secrets.AZURE_FRONTEND_RESOURCE_GROUP }}
