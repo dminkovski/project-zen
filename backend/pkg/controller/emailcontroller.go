@@ -40,14 +40,20 @@ func (controller *EmailController) GetEmails(c *gin.Context) {
 		return
 	}
 
-	jsonData, err := json.Marshal(mails)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
-		return
+	completeSummary := mail.GetSummaryOfMails(mails)
+	mailResponse := mail.MailResponse{
+		Summary: completeSummary,
+		Mails:   mails,
 	}
+
 	if controller.BlobClient != nil {
+		jsonData, err := json.Marshal(mailResponse)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, err)
+			return
+		}
 		controller.BlobClient.UploadTextToBlob(jsonData)
 	}
 
-	c.JSON(http.StatusOK, mails)
+	c.JSON(http.StatusOK, mailResponse)
 }
