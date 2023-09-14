@@ -11,7 +11,7 @@ import (
 )
 
 /*
-The EmailController provides the APIs for the frontend to get the summary of all newsletters
+The EmailController provides the APIs for the frontend to get all unread emails and marks them as read
 */
 type EmailController struct {
 	GetEmailsRoute string
@@ -28,7 +28,7 @@ func NewEmailController(auth *auth.OAuth, blobClient *auth.StorageClient) *Email
 }
 
 func (controller *EmailController) GetEmails(c *gin.Context) {
-	fmt.Println("Hello from \"Get Emails\"")
+	fmt.Println("Executing \"Get Emails\"")
 	client := controller.Authenticator.GetClient()
 	if client == nil {
 		c.JSON(http.StatusUnauthorized, "No token.")
@@ -45,7 +45,9 @@ func (controller *EmailController) GetEmails(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, err)
 		return
 	}
-	controller.BlobClient.UploadTextToBlob(jsonData)
+	if controller.BlobClient != nil {
+		controller.BlobClient.UploadTextToBlob(jsonData)
+	}
 
 	c.JSON(http.StatusOK, mails)
 }

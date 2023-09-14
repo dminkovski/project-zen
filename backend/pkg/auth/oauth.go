@@ -120,7 +120,6 @@ func StartOAuthFlow(c *gin.Context, auth *OAuth) {
 	}
 	fmt.Printf("Token already saved: %v\n", tok)
 	c.Redirect(http.StatusFound, "https://project-zen.com/dashboard")
-	//c.JSON(http.StatusOK, tok)
 }
 
 func AuthCallback(c *gin.Context, auth *OAuth) {
@@ -139,5 +138,4 @@ func AuthCallback(c *gin.Context, auth *OAuth) {
 	saveToken("token.json", token)
 
 	c.Redirect(http.StatusFound, "https://project-zen.com/dashboard")
-	//c.JSON(http.StatusOK, gin.H{"message": "Authorization successful"})
 }
