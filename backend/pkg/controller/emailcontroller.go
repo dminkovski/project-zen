@@ -14,16 +14,18 @@ import (
 The EmailController provides the APIs for the frontend to get all unread emails and marks them as read
 */
 type EmailController struct {
-	GetEmailsRoute string
-	Authenticator  *auth.OAuth
-	BlobClient     *auth.StorageClient
+	GetEmailsRoute            string
+	GetEmailsWithSummaryRoute string
+	Authenticator             *auth.OAuth
+	BlobClient                *auth.StorageClient
 }
 
 func NewEmailController(auth *auth.OAuth, blobClient *auth.StorageClient) *EmailController {
 	return &EmailController{
-		GetEmailsRoute: "/emails",
-		Authenticator:  auth,
-		BlobClient:     blobClient,
+		GetEmailsRoute:            "/emails",
+		GetEmailsWithSummaryRoute: "/smart-emails",
+		Authenticator:             auth,
+		BlobClient:                blobClient,
 	}
 }
 
@@ -34,7 +36,32 @@ func (controller *EmailController) GetEmails(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, "No token.")
 		return
 	}
-	mails, err := mail.ReadGmailEmails(client)
+	mails, err := mail.ReadGmailEmails(client, false)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
+		return
+	}
+
+	if controller.BlobClient != nil {
+		jsonData, err := json.Marshal(mails)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, err)
+			return
+		}
+		controller.BlobClient.UploadTextToBlob(jsonData)
+	}
+
+	c.JSON(http.StatusOK, mails)
+}
+
+func (controller *EmailController) GetEmailsWithSummary(c *gin.Context) {
+	fmt.Println("Executing \"Get Emails WIth Summary\"")
+	client := controller.Authenticator.GetClient()
+	if client == nil {
+		c.JSON(http.StatusUnauthorized, "No token.")
+		return
+	}
+	mails, err := mail.ReadGmailEmails(client, true)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err)
 		return

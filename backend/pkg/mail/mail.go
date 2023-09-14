@@ -11,9 +11,9 @@ type Mail struct {
 	Body    string
 	//Images  []Image
 	//Links   []Link
-	Images  []string
-	Links   []string
-	Summary string
+	Images  []string `json:"Images,omitempty"`
+	Links   []string `json:"Links,omitempty"`
+	Summary string   `json:"Summary,omitempty"`
 }
 
 type Image struct {

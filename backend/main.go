@@ -57,6 +57,7 @@ func main() {
 
 	// Setting the routes for the APIs consumed by the frontend
 	inboxZenRouter.GET(emailController.GetEmailsRoute, emailController.GetEmails)
+	inboxZenRouter.GET(emailController.GetEmailsWithSummaryRoute, emailController.GetEmailsWithSummary)
 
 	router.Run(port)
 }

@@ -14,7 +14,7 @@ import (
 	"google.golang.org/api/gmail/v1"
 )
 
-func ReadGmailEmails(client *http.Client) ([]Mail, error) {
+func ReadGmailEmails(client *http.Client, extractSummary bool) ([]Mail, error) {
 	mails := make([]Mail, 0)
 	// Create a Gmail API service instance.
 	srv, err := gmail.New(client)
@@ -32,7 +32,7 @@ func ReadGmailEmails(client *http.Client) ([]Mail, error) {
 
 	fmt.Println("Unread Messages:")
 	for _, message := range messages.Messages {
-		mail, err := extractMailInformation(srv, message)
+		mail, err := extractMailInformation(srv, message, extractSummary)
 		if err != nil {
 			continue
 		}
@@ -42,7 +42,7 @@ func ReadGmailEmails(client *http.Client) ([]Mail, error) {
 	return mails, nil
 }
 
-func extractMailInformation(srv *gmail.Service, message *gmail.Message) (Mail, error) {
+func extractMailInformation(srv *gmail.Service, message *gmail.Message, extractSummary bool) (Mail, error) {
 	msg, err := srv.Users.Messages.Get("me", message.Id).Do()
 	if err != nil {
 		fmt.Printf("Unable to retrieve message details: %v\n", err)
@@ -64,6 +64,14 @@ func extractMailInformation(srv *gmail.Service, message *gmail.Message) (Mail, e
 		if header.Name == "Date" {
 			date = header.Value
 		}
+	}
+	if !extractSummary {
+		return Mail{
+			Subject: subject,
+			Date:    date,
+			From:    from,
+			Body:    msg.Snippet,
+		}, nil
 	}
 
 	html, err := getHtml(msg)
