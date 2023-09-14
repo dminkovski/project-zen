@@ -15,13 +15,13 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-
-      - name: Set up Azure CLI
-        uses: azure/login@v1
+      - name: Login to Azure Container Registry
+        uses: azure/docker-login@v1
         with:
-          creds: ${{ secrets.AZURE_FRONTEND_CREDENTIALS }}
-          enable-AzPSSession: true
-      - name: Build and push Docker image
+          login-server: ${{ secrets.AZURE_FRONTEND_REGISTRY }}.azurecr.io
+          username: ${{ secrets.AZURE_FRONTEND_REGISTRY_USERNAME }}
+          password: ${{ secrets.AZURE_FRONTEND_REGISTRY_PASSWORD }}
+      - name: Build and push Docker image to ACR
         uses: docker/build-push-action@v2
         with:
           context: ./frontend
@@ -29,11 +29,6 @@ jobs:
           tags: |
             ${{ secrets.AZURE_FRONTEND_REGISTRY }}.azurecr.io/${{secrets.FRONTEND_IMAGE_NAME}}:latest
             ${{ secrets.AZURE_FRONTEND_REGISTRY }}.azurecr.io/${{secrets.FRONTEND_IMAGE_NAME}}:${{ github.sha }}
-      - name: Deploy to React Web App
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: "your-web-app-1"
-          package: "./frontend"
   redeploy_app_service:
     runs-on: ubuntu-latest
     needs: build_and_push_image
