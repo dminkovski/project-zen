@@ -29,7 +29,7 @@ const Legal = () => {
         Just kidding!
         <br />
         Here you go:{" "}
-        <a href="mailto:dminkovski@microsoft.com">Leave Feedback.</a>
+        <a href="mailto:projectzenhackathon@gmail.com">Leave Feedback.</a>
       </p>
       <Footer />
     </div>
