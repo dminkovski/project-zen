@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from "react";
-import { Text } from "@fluentui/react";
-import { IEmail } from "src/model/interfaces";
+import { useEffect, useState } from "react";
+import { Text, Image } from "@fluentui/react";
+import { IEmail } from "../../model/interfaces";
 import { Spinner } from "@fluentui/react/lib/Spinner";
+import Footer from "../../components/footer";
 
 const Dashboard = () => {
   const [emails, setEmails] = useState([] as Array<IEmail>);
@@ -61,18 +62,14 @@ const Dashboard = () => {
 
   return (
     <div style={{ background: "#f8f8f8" }}>
-      <Text
-        as="h1"
-        style={{
-          fontSize: 38,
-        }}
-      >
-        Project-Zen Dashboard
-      </Text>
+      <Image
+        src="logo.png" // Add your logo image here
+        style={{ width: 100, margin: "auto", marginBottom: "100px" }}
+      />
       {loading && (
         <div>
           <Spinner
-            label="Seriously, I am loading..."
+            label="Patience, I am loading...grab a coffee."
             ariaLive="assertive"
             labelPosition="top"
           />
@@ -80,7 +77,7 @@ const Dashboard = () => {
       )}
       {!loading && emails?.length <= 0 && (
         <div>
-          <p>No unread emails</p>
+          <p>No unread emails.</p>
         </div>
       )}
       {emails &&
@@ -102,6 +99,7 @@ const Dashboard = () => {
             <div dangerouslySetInnerHTML={{ __html: mail.Summary }} />
           </div>
         ))}
+      <Footer />
     </div>
   );
 };

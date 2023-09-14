@@ -7,6 +7,7 @@ import Legal from "./modules/legal/legal.tsx";
 import "./App.css";
 
 import "./index.css";
+
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 const router = createBrowserRouter([
