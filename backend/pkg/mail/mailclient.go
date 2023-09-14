@@ -16,11 +16,6 @@ func ReadGmailEmails(client *http.Client) ([]Mail, error) {
 		return mails, err
 	}
 
-	/*srv, err := gmail.NewService(ctx, option.WithHTTPClient(client))
-	if err != nil {
-		log.Fatalf("Unable to retrieve Gmail client: %v", err)
-	}*/
-
 	// List Gmail messages.
 	messages, err := srv.Users.Messages.List("me").Q("is:unread").Do()
 	if err != nil {

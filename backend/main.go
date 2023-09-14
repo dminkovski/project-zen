@@ -9,17 +9,11 @@ import (
 	"project-zen/pkg/controller"
 	"project-zen/pkg/jobs"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	connectionString, exists := os.LookupEnv("storageaccountkey")
-	if !exists {
-		fmt.Println("failed to get connectionString")
-		os.Exit(1)
-	}
-	blobClient := auth.NewStorageClient(connectionString)
-
 	clientId, exists := os.LookupEnv("clientId")
 	if !exists {
 		fmt.Println("failed to get clientId")
@@ -49,6 +43,7 @@ func main() {
 	httpPathPrefix := "/project-zen"
 	port := ":8080"
 	router := gin.Default()
+	router.Use(cors.Default())
 
 	// Creating the auth controller
 	authController := controller.NewAuthController(oauth)
@@ -57,14 +52,10 @@ func main() {
 
 	inboxZenRouter := router.Group(httpPathPrefix)
 
-	// Creating the summaryController for the APIs consumed by the frontend
-	summaryController := controller.NewSummaryController()
-	discountsController := controller.NewDiscountsController()
-	emailController := controller.NewEmailController(oauth, blobClient)
+	// Creating the controller for the APIs consumed by the frontend
+	emailController := controller.NewEmailController(oauth, nil)
 
 	// Setting the routes for the APIs consumed by the frontend
-	inboxZenRouter.GET(summaryController.GetSummaryRoute, summaryController.GetSummary)
-	inboxZenRouter.GET(discountsController.GetDiscountsRoute, discountsController.GetDiscounts)
 	inboxZenRouter.GET(emailController.GetEmailsRoute, emailController.GetEmails)
 
 	router.Run(port)
