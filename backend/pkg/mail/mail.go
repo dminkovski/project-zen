@@ -9,6 +9,7 @@ type Mail struct {
 	Date    string
 	Subject string
 	Body    string
+	Images  []Image
 }
 
 func NewMail(subject string, msg *gmail.Message) *Mail {
@@ -18,4 +19,9 @@ func NewMail(subject string, msg *gmail.Message) *Mail {
 		Date:    msg.Payload.Headers[1].Value,
 		Body:    msg.Snippet,
 	}
+}
+
+type Image struct {
+	Source      string
+	Description string
 }
