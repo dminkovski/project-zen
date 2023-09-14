@@ -65,6 +65,12 @@ func extractMailInformation(srv *gmail.Service, message *gmail.Message, extractS
 			date = header.Value
 		}
 	}
+	err = markMessageAsRead(srv, "me", message.Id)
+	if err != nil {
+		fmt.Printf("Unable to mark message as read: %v\n", err)
+	} else {
+		fmt.Printf("Marked message as read: %s\n", message.Id)
+	}
 	if !extractSummary {
 		return Mail{
 			Subject: subject,
