@@ -1,11 +1,8 @@
 package mail
 
 import (
-	"bytes"
 	"encoding/base64"
-	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"regexp"
 	"strings"
@@ -14,8 +11,8 @@ import (
 	"google.golang.org/api/gmail/v1"
 )
 
-func ReadGmailEmails(client *http.Client, extractSummary bool) ([]Mail, error) {
-	mails := make([]Mail, 0)
+func ReadGmailEmails(client *http.Client) ([]*Mail, error) {
+	mails := make([]*Mail, 0)
 	// Create a Gmail API service instance.
 	srv, err := gmail.New(client)
 	if err != nil {
@@ -32,7 +29,7 @@ func ReadGmailEmails(client *http.Client, extractSummary bool) ([]Mail, error) {
 
 	fmt.Println("Unread Messages:")
 	for _, message := range messages.Messages {
-		mail, err := extractMailInformation(srv, message, extractSummary)
+		mail, err := extractMailInformation(srv, message)
 		if err != nil {
 			continue
 		}
@@ -42,11 +39,11 @@ func ReadGmailEmails(client *http.Client, extractSummary bool) ([]Mail, error) {
 	return mails, nil
 }
 
-func extractMailInformation(srv *gmail.Service, message *gmail.Message, extractSummary bool) (Mail, error) {
+func extractMailInformation(srv *gmail.Service, message *gmail.Message) (*Mail, error) {
 	msg, err := srv.Users.Messages.Get("me", message.Id).Do()
 	if err != nil {
 		fmt.Printf("Unable to retrieve message details: %v\n", err)
-		return Mail{}, nil
+		return nil, nil
 	}
 
 	subject := ""
@@ -71,24 +68,16 @@ func extractMailInformation(srv *gmail.Service, message *gmail.Message, extractS
 	} else {
 		fmt.Printf("Marked message as read: %s\n", message.Id)
 	}
-	if !extractSummary {
-		return Mail{
-			Subject: subject,
-			Date:    date,
-			From:    from,
-			Body:    msg.Snippet,
-		}, nil
-	}
 
 	html, err := getHtml(msg)
 	if err != nil {
-		return Mail{}, nil
+		return nil, nil
 	}
 
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
 	if err != nil {
 		fmt.Printf("Error parsing HTML: %v\n", err)
-		return Mail{
+		return &Mail{
 			Subject: subject,
 			Date:    date,
 			From:    from,
@@ -106,9 +95,9 @@ func extractMailInformation(srv *gmail.Service, message *gmail.Message, extractS
 		Images:  images,
 		Links:   links,
 	}
-	summary := getMailSummary(mail)
-	mail.Summary = summary
-	return mail, nil
+	//summary := getMailSummary(mail)
+	//mail.Summary = summary
+	return &mail, nil
 }
 
 func getHtml(msg *gmail.Message) (string, error) {
@@ -209,69 +198,6 @@ func containsOnlyWhitespace(inputStr string) bool {
 	return regexp.MustCompile(`^\s*$`).MatchString(inputStr)
 }
 
-func getMailSummary(mail Mail) string {
-	body := SummaryRequest{
-		Message: mail.Body,
-	}
-	jsonData, err := json.Marshal(body)
-	if err != nil {
-		fmt.Println("Error marshaling JSON:", err)
-		return ""
-	}
-	return getSummary(jsonData)
-}
-
-func GetSummaryOfMails(mails []Mail) string {
-	allMails := ""
-	for _, mail := range mails {
-		allMails = allMails + ", " + mail.Body
-	}
-	body := SummaryRequest{
-		Message: allMails,
-	}
-	jsonData, err := json.Marshal(body)
-	if err != nil {
-		fmt.Println("Error marshaling JSON:", err)
-		return ""
-	}
-	return getSummary(jsonData)
-}
-
-func getSummary(jsonData []byte) string {
-	url := "https://projectzen.azurewebsites.net"
-
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
-	if err != nil {
-		fmt.Println("Error creating request:", err)
-		return ""
-	}
-
-	req.Header.Set("Content-Type", "text/html; charset=utf-8")
-
-	client := &http.Client{}
-
-	resp, err := client.Do(req)
-	if err != nil {
-		fmt.Println("Error sending request:", err)
-		return ""
-	}
-	defer resp.Body.Close()
-
-	responseBody, err := io.ReadAll(resp.Body)
-	if err != nil {
-		fmt.Println("Error reading response:", err)
-		return ""
-	}
-
-	if resp.StatusCode == http.StatusOK {
-		fmt.Println("POST request was successful")
-		return string(responseBody)
-	} else {
-		fmt.Printf("POST request failed with status code %d\n", resp.StatusCode)
-	}
-	return ""
-}
-
 func markMessageAsRead(srv *gmail.Service, userId, messageId string) error {
 	modifyRequest := &gmail.ModifyMessageRequest{
 		RemoveLabelIds: []string{"UNREAD"},
@@ -295,8 +221,4 @@ func removeDuplicates(input []string) []string {
 	}
 
 	return result
-}
-
-type SummaryRequest struct {
-	Message string `json:"message"`
 }

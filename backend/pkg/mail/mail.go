@@ -2,7 +2,7 @@ package mail
 
 type MailResponse struct {
 	Summary string
-	Mails   []Mail
+	Mails   []*Mail
 }
 type Mail struct {
 	From    string
