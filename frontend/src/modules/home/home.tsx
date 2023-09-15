@@ -16,13 +16,12 @@ const Home = () => {
           >
             Welcome to <b>Project-Zen</b>
           </h1>
-          <br />
           <h3
             style={{
               fontSize: 28,
               marginBottom: "40px",
-              marginTop: 15,
               color: "#666",
+              fontWeight: 400,
             }}
           >
             Uncluttered Inboxes mean Happy Souls
