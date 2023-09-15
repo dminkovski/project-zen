@@ -1,48 +1,32 @@
 import { useEffect, useState } from "react";
-import { Text, Image } from "@fluentui/react";
 import { IEmail } from "../../model/interfaces";
-import { Spinner } from "@fluentui/react/lib/Spinner";
-import Footer from "../../components/footer";
+import Footer from "../../components/Footer/Footer";
+import { Loader, Text } from "@mantine/core";
+import { Email } from "../../components/Email/Email";
+import * as Config from "../../config/config";
 
 const Dashboard = () => {
   const [emails, setEmails] = useState([] as Array<IEmail>);
+  const [summary, setSummary] = useState("");
   const [loading, setLoading] = useState(false);
 
   const getEmails = async () => {
     if (!loading) {
       setLoading(true);
       try {
-        const response = await fetch(
-          "https://project-zen.azurewebsites.net/project-zen/emails",
-          {
-            method: "GET",
-          }
-        );
+        const response = await fetch(Config.EMAILS_API, {
+          method: "GET",
+        });
         const data = await response.json();
-        if (data && Array.isArray(data) && data.length > 0) {
-          const promises = [];
-          for (let i = 0; i < data.length; i++) {
-            const item = data[i];
-            const promis = fetch("https://projectzen.azurewebsites.net", {
-              method: "POST",
-              body: JSON.stringify({
-                message: (item as IEmail).Body,
-              }),
-              headers: { "Content-Type": "text/html; charset=utf-8" },
-            });
-            promises.push(promis);
-          }
-          const results = await Promise.all(promises);
-          console.log(results);
-          for (let j = 0; j < results.length; j++) {
-            data[j].Summary = await results[j].text();
-          }
-
-          console.log(data);
-
-          setEmails(data as unknown as Array<IEmail>);
+        const mails = data.Mails;
+        const summary = data.Summary;
+        setSummary(summary);
+        if (mails && Array.isArray(mails) && mails.length > 0) {
+          setEmails(mails as unknown as Array<IEmail>);
         }
       } catch (error) {
+        setSummary("");
+        setEmails([]);
         console.error(JSON.stringify(error));
       } finally {
         setLoading(false);
@@ -61,44 +45,79 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div style={{ background: "#f8f8f8" }}>
-      <Image
+    <div style={{ position: "relative", paddingBottom: 100, minHeight: 600 }}>
+      <img
         src="logo.png" // Add your logo image here
-        style={{ width: 100, margin: "auto", marginBottom: "100px" }}
+        style={{ width: 100, margin: "auto", marginBottom: "50px" }}
       />
       {loading && (
         <div>
-          <Spinner
-            label="Patience, I am loading...grab a coffee."
-            ariaLive="assertive"
-            labelPosition="top"
-          />
+          <Loader />
+          <br />
+          <Text
+            variant="gradient"
+            gradient={{ from: "indigo", to: "cyan", deg: 45 }}
+            sx={{ fontFamily: "Greycliff CF, sans-serif" }}
+            ta="center"
+            fz="xl"
+            fw={300}
+          >
+            Patience, I am loading...grab a coffee.
+          </Text>
         </div>
       )}
+      {summary && !loading && (
+        <div>
+          <Text
+            size="xl"
+            variant="gradient"
+            gradient={{ from: "green", to: "black", deg: 45 }}
+            mb={25}
+          >
+            Executive Summary
+          </Text>
+          <Text size="l" color="" align="justify">
+            {summary}
+          </Text>
+        </div>
+      )}
+
       {!loading && emails?.length <= 0 && (
         <div>
-          <p>No unread emails.</p>
+          <Text
+            size="xl"
+            variant="gradient"
+            gradient={{ from: "green", to: "black", deg: 45 }}
+            mb={25}
+            mt={50}
+          >
+            No unread newsletters
+          </Text>
         </div>
       )}
-      {emails &&
-        Array.isArray(emails) &&
-        emails?.map((mail: IEmail, index: number) => (
-          <div
-            key={index}
-            style={{
-              marginBottom: 25,
-              background: "#fff",
-              borderRadius: 15,
-              padding: 15,
-            }}
+      {emails && Array.isArray(emails) && emails.length > 0 && (
+        <div>
+          <Text
+            size="xl"
+            mb={25}
+            mt={50}
+            variant="gradient"
+            gradient={{ from: "green", to: "black", deg: 45 }}
           >
-            <h4>{mail.Subject}</h4>
-            <div dangerouslySetInnerHTML={{ __html: mail.Body }} />
-            <hr />
-            <span style={{ color: "#666" }}>Summary:</span>
-            <div dangerouslySetInnerHTML={{ __html: mail.Summary }} />
-          </div>
-        ))}
+            Newsletters
+          </Text>
+          {emails?.map((mail: IEmail, index: number) => (
+            <div key={index}>
+              <Email
+                title={mail.Subject}
+                from={mail.From}
+                body={mail.Body}
+                date={mail.Date}
+              />
+            </div>
+          ))}{" "}
+        </div>
+      )}
       <Footer />
     </div>
   );

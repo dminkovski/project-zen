@@ -1,13 +1,10 @@
-import { Image } from "@fluentui/react";
-import Footer from "../../components/footer";
+import Footer from "../../components/Footer/Footer";
+import Logo from "../../components/Logo/Logo";
 
 const About = () => {
   return (
     <div style={{ textAlign: "center", padding: "50px" }}>
-      <Image
-        src="logo.png" // Add your logo image here
-        style={{ width: 100, margin: "auto", marginBottom: "50px" }}
-      />
+      <Logo />
       <h1>About Us</h1>
       <p>
         We are a dynamic team of four passionate individuals brought together by

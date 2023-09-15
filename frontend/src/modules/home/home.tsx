@@ -1,49 +1,23 @@
-import { PrimaryButton, Image, Text } from "@fluentui/react";
-import { useNavigate } from "react-router-dom";
-import { initializeIcons } from "@fluentui/font-icons-mdl2";
-import { Icon } from "@fluentui/react/lib/Icon";
 import { Wrapper, Row, LeftColumn, RightColumn } from "./home.styles";
-import Footer from "../../components/footer";
+import Footer from "../../components/Footer/Footer";
+import GoogleButton from "../../components/GoogleButton/GoogleButton";
+import Logo from "../../components/Logo/Logo";
+import * as Config from "../../config/config";
 const Home = () => {
-  initializeIcons();
-
-  const navigate = useNavigate();
-  const start = async () => {
-    // window.location.href ="https://project-zen.azurewebsites.net/auth/start-oauth-flow";
-    navigate("/dashboard");
-    /*const response = await fetch(
-      "https://project-zen.azurewebsites.net/auth/start-oauth-flow"
-    );
-    if (
-      (response as any).access_token ||
-      (response as any).message == "Authorization successful"
-    ) {
-      navigate("/dashboard");
-    } else {
-      window.location.href =
-        "https://project-zen.azurewebsites.net/auth/start-oauth-flow";
-    }*/
-  };
-
   return (
     <Wrapper>
       <Row>
         <LeftColumn>
-          <Image
-            src="logo.png" // Add your logo image here
-            style={{ width: 100, margin: "auto", marginBottom: "50px" }}
-          />
-          <Text
-            as="h1"
+          <Logo />
+          <h1
             style={{
               fontSize: 38,
             }}
           >
             Welcome to <b>Project-Zen</b>
-          </Text>
+          </h1>
           <br />
-          <Text
-            as="h3"
+          <h3
             style={{
               fontSize: 28,
               marginBottom: "40px",
@@ -52,7 +26,7 @@ const Home = () => {
             }}
           >
             Uncluttered Inboxes mean Happy Souls
-          </Text>
+          </h3>
 
           <p
             style={{
@@ -72,16 +46,12 @@ const Home = () => {
             <br />
             Say goodbye to clutter, and hello to peace of mind!
           </p>
-          <PrimaryButton
-            primary
-            style={{ width: 150, height: 50, fontSize: 16 }}
-            href="https://project-zen.azurewebsites.net/auth/start-oauth-flow"
-          >
-            Get Started
-          </PrimaryButton>
+          <GoogleButton href={Config.AUTHENTICATION_URL}>
+            Continue with Google
+          </GoogleButton>
         </LeftColumn>
         <RightColumn>
-          <Image src="home.png" style={{ width: "100%" }} />
+          <img src="home.png" style={{ width: "100%" }} />
           <span style={{ color: "#666", fontStyle: "italic" }}>
             Emails opened by a cute robot standing in front of a zen garden,
             digital art

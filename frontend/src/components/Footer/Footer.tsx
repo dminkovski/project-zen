@@ -1,5 +1,5 @@
 import { styled } from "styled-components";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const StyledFooter = styled.div`
   position: absolute;

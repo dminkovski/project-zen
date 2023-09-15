@@ -1,13 +1,10 @@
-import { Image } from "@fluentui/react";
-import Footer from "../../components/footer";
+import Footer from "../../components/Footer/Footer";
+import Logo from "../../components/Logo/Logo";
 
 const Legal = () => {
   return (
     <div style={{ textAlign: "center", padding: "50px" }}>
-      <Image
-        src="logo.png" // Add your logo image here
-        style={{ width: 100, margin: "auto", marginBottom: "50px" }}
-      />
+      <Logo />
       <h1>Legal</h1>
       <p>
         Project Zen is a prototype developed for the microsoft hackathon 2023
